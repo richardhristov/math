@@ -1,4 +1,7 @@
 export const formulaReplace = (text: string, replace: any) => {
+	if (typeof text.replaceAll !== "function") {
+		return text;
+	}
 	Object.entries(replace).forEach(([key, value]) => {
 		if (value === null) {
 			return;
@@ -20,21 +23,24 @@ export const fractionSimplify = (numerator: number, denominator: number) => {
 	return [numerator / _gcd, denominator / _gcd];
 };
 
-export const fractionAdd = (a1: number, b1: number, a2: number, b2: number) => {
-	if (b1 === b2) {
-		return [a1 + a2, b1];
+export const fractionAdd = (x1: number, y1: number, x2: number, y2: number) => {
+	if (y1 === y2) {
+		return [x1 + x2, y1];
 	}
-	const _lcm = lcm(b1, b2);
-	const y1 = a1 / (b1 / _lcm);
-	const y2 = a2 / (b2 / _lcm);
-	return [y1 + y2, _lcm];
+	const _lcm = lcm(y1, y2);
+	const z1 = x1 / (y1 / _lcm);
+	const z2 = x2 / (y2 / _lcm);
+	return [z1 + z2, _lcm];
 };
 
 export const fractionMultiply = (
-	a1: number,
-	b1: number,
-	a2: number,
-	b2: number
-) => [a1 * a2, b1 * b2];
+	x1: number,
+	y1: number,
+	x2: number,
+	y2: number
+) => [x1 * x2, y1 * y2];
 
-export const fractionDivide = (a: number, b: number, c: number) => [a, b * c];
+export const fractionDivide = (a: number, b: number, c: number, d: number) => [
+	a * d,
+	b * c,
+];

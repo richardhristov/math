@@ -5,23 +5,32 @@ export interface InputXnrProps {
 	n: number;
 	r: number;
 	onChange: (n: number, r: number) => void;
+	placeholderN?: string;
+	placeholderR?: string;
 }
 
-const InputXnr: FC<InputXnrProps> = ({ letter, n, r, onChange }) => {
+const InputXnr: FC<InputXnrProps> = ({
+	letter,
+	n,
+	r,
+	onChange,
+	placeholderN = "n",
+	placeholderR = "r",
+}) => {
 	return (
 		<div className="xnr">
 			<div className="xnr__letter">{letter}</div>
 			<div className="xnr__inputs">
 				<input
 					className="xnr__r"
-					placeholder="r"
+					placeholder={placeholderR}
 					type="number"
 					value={r || ""}
 					onChange={(e) => onChange(n, e.target.valueAsNumber)}
 				/>
 				<input
 					className="xnr__n"
-					placeholder="n"
+					placeholder={placeholderN}
 					type="number"
 					value={n || ""}
 					onChange={(e) => onChange(e.target.valueAsNumber, r)}
