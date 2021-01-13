@@ -6,6 +6,9 @@ export interface InputSingleProbabilityProps {
 	A1: number;
 	A2: number;
 	onChange: (A1: number, A2: number) => void;
+	placeholderA1?: string;
+	placeholderA2?: string;
+	prefix?: string;
 }
 
 const InputSingleProbability: FC<InputSingleProbabilityProps> = ({
@@ -13,13 +16,16 @@ const InputSingleProbability: FC<InputSingleProbabilityProps> = ({
 	A1,
 	A2,
 	onChange,
+	placeholderA1 = "A1",
+	placeholderA2 = "A2",
+	prefix,
 }) => {
 	const inputA = (
 		<Division
 			high={
 				<input
 					className="probability__A"
-					placeholder="A1"
+					placeholder={placeholderA1}
 					type="number"
 					value={A1 || ""}
 					onChange={(e) => onChange(e.target.valueAsNumber, A2)}
@@ -28,7 +34,7 @@ const InputSingleProbability: FC<InputSingleProbabilityProps> = ({
 			low={
 				<input
 					className="probability__A"
-					placeholder="A2"
+					placeholder={placeholderA2}
 					type="number"
 					value={A2 || ""}
 					onChange={(e) => onChange(A1, e.target.valueAsNumber)}
@@ -38,7 +44,8 @@ const InputSingleProbability: FC<InputSingleProbabilityProps> = ({
 	);
 	return (
 		<div className="probability probability--dual">
-			{letter}({inputA})
+			{letter}({prefix || ""}
+			{inputA})
 		</div>
 	);
 };

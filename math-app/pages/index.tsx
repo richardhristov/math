@@ -4,6 +4,7 @@ import {
 	fractionDivide,
 	fractionMultiply,
 } from "../helpers/math";
+import { useEffect, useState } from "react";
 
 import BracketLeft from "../components/BracketLeft";
 import BracketRight from "../components/BracketRight";
@@ -20,7 +21,6 @@ import Minus from "../components/Minus";
 import Multiply from "../components/Multiply";
 import Plus from "../components/Plus";
 import { formulaReplace } from "../helpers/math";
-import { useState } from "react";
 
 const VTildenr = () => {
 	const [n, setN] = useState(null);
@@ -146,9 +146,9 @@ const CTildenr = () => {
 };
 
 const ANot = () => {
-	const [A1, setA1] = useState(null);
+	const [A1, setA1] = useState(1);
 	const [A2, setA2] = useState(null);
-	const setNR = (A1, A2) => {
+	const setA = (A1, A2) => {
 		setA1(A1);
 		setA2(A2);
 	};
@@ -157,18 +157,18 @@ const ANot = () => {
 
 	let equals = null;
 	if (A1 !== null && A2 !== null) {
-		const [solvedHigh, solvedLow] = [A2 - A1, A2];
+		const [highSolved, lowSolved] = [A2 - A1, A2];
 		equals = (
 			<>
 				<Equals />
-				<DivisionSimplifier high={solvedHigh} low={solvedLow} />
+				<DivisionSimplifier high={highSolved} low={lowSolved} />
 			</>
 		);
 	}
 
 	return (
 		<Equation>
-			<InputSingleProbability letter="!P" A1={A1} A2={A2} onChange={setNR} />
+			<InputSingleProbability letter="!P" A1={A1} A2={A2} onChange={setA} />
 			<Equals />
 			1
 			<Minus />
@@ -327,23 +327,121 @@ const AWhenBIndependent = () => {
 	);
 };
 
+const TotalProbability = () => {
+	const [n, setN] = useState(2);
+	const [states, setStates] = useState([]);
+	const setA = (A1, A2, idx) => {
+		const _states = [...states];
+		_states[idx][0] = A1;
+		_states[idx][1] = A2;
+		setStates(_states);
+	};
+	const setB = (A1, A2, idx) => {
+		const _states = [...states];
+		_states[idx][2] = A1;
+		_states[idx][3] = A2;
+		setStates(_states);
+	};
+	useEffect(() => {
+		const _As = states.slice(0, n);
+		for (let i = _As.length - 1; i < n - 1; i++) {
+			_As.push([1, null, 1, null]);
+		}
+		setStates(_As);
+	}, [n]);
+
+	const othersComponents = [];
+	const othersSumComponents = [];
+	let hasNull = false;
+	let [highSolved, lowSolved] = [0, 0];
+	for (let i = 0; i < n; i++) {
+		const A1 = (states[i] || [])[0];
+		const A2 = (states[i] || [])[1];
+		const B1 = (states[i] || [])[2];
+		const B2 = (states[i] || [])[3];
+		othersComponents.push(
+			<>
+				<InputSingleProbability
+					letter="P"
+					prefix={`A | B${i} = `}
+					A1={A1}
+					A2={A2}
+					onChange={(A1, A2) => setA(A1, A2, i)}
+				/>
+				<Multiply />
+				<InputSingleProbability
+					letter="P"
+					A1={B1}
+					A2={B2}
+					placeholderA1={`B${i}1`}
+					placeholderA2={`B${i}2`}
+					onChange={(B1, B2) => setB(B1, B2, i)}
+				/>
+				{i < n - 1 ? <Multiply /> : null}
+			</>
+		);
+		othersSumComponents.push(
+			<>
+				<Division high={A1} low={A2} />
+				<Multiply />
+				<Division high={B1} low={B2} />
+				{i < n - 1 ? <Plus /> : null}
+			</>
+		);
+		if (A1 === null || A2 === null || B1 === null || B2 === null) {
+			hasNull = true;
+		} else {
+			const [high, low] = fractionMultiply(A1, A2, B1, B2);
+			[highSolved, lowSolved] =
+				i > 0 ? fractionAdd(high, low, highSolved, lowSolved) : [high, low];
+		}
+	}
+
+	let equals = null;
+	if (!hasNull) {
+		equals = (
+			<>
+				<Equals />
+				<DivisionSimplifier high={highSolved} low={lowSolved} />
+			</>
+		);
+	}
+
+	return (
+		<>
+			n =
+			<input
+				type="number"
+				value={n}
+				onChange={(e) => setN(e.target.valueAsNumber)}
+			/>
+			<Equation>
+				{othersComponents}
+				<Equals />
+				{othersSumComponents}
+				{equals}
+			</Equation>
+		</>
+	);
+};
+
 const PageHome = () => {
 	return (
 		<>
 			<Head>
 				<title>Math</title>
 			</Head>
-			<h1 id="permutations">Permutations</h1>
+			<h1 id="permutations">0. Permutations</h1>
 			<h3>Order = YES, Repetition = YES</h3>
 			<VTildenr />
 			<h3>Order = YES, Repetition = NO</h3>
 			<Vnr />
-			<h1 id="combinations">Combinations</h1>
+			<h1 id="combinations">1. Combinations</h1>
 			<h3>Order = NO, Repetition = YES</h3>
 			<Cnr />
 			<h3>Order = NO, Repetition = NO</h3>
 			<CTildenr />
-			<h1>Probabilities, always in [0, 1]</h1>
+			<h1 id="probabilities">2. Probabilities, always in [0, 1]</h1>
 			<h3>Reverse A</h3>
 			<ANot />
 			<h3>A or B, Mutually exclusive = YES</h3>
@@ -354,6 +452,9 @@ const PageHome = () => {
 			<AAndBIndependent />
 			<h3>A when B, Independent = YES</h3>
 			<AWhenBIndependent />
+			<h1 id="total">3. Total probability</h1>
+			<TotalProbability />
+			Theory of Statistics
 		</>
 	);
 };
