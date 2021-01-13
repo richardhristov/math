@@ -263,9 +263,9 @@ const PageHome = () => {
 			<h3>Order = YES, Repetition = NO</h3>
 			<Vnr />
 			<h1 id="combinations">Combinations</h1>
-			<h3>Order = NO , Repetition = YES</h3>
+			<h3>Order = NO, Repetition = YES</h3>
 			<Cnr />
-			<h3>Order = NO , Repetition = NO</h3>
+			<h3>Order = NO, Repetition = NO</h3>
 			<CStarnr />
 			<p>Test</p>
 			<h1>Probabilities</h1>
