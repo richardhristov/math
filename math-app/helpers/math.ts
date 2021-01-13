@@ -23,6 +23,8 @@ export const fractionSimplify = (numerator: number, denominator: number) => {
 	return [numerator / _gcd, denominator / _gcd];
 };
 
+export const fractionNot = (a: number, b: number) => [b - a, b];
+
 export const fractionAdd = (x1: number, y1: number, x2: number, y2: number) => {
 	if (y1 === y2) {
 		return [x1 + x2, y1];
@@ -31,6 +33,21 @@ export const fractionAdd = (x1: number, y1: number, x2: number, y2: number) => {
 	const z1 = x1 / (y1 / _lcm);
 	const z2 = x2 / (y2 / _lcm);
 	return [z1 + z2, _lcm];
+};
+
+export const fractionSubtract = (
+	x1: number,
+	y1: number,
+	x2: number,
+	y2: number
+) => {
+	if (y1 === y2) {
+		return [x1 - x2, y1];
+	}
+	const _lcm = lcm(y1, y2);
+	const z1 = x1 / (y1 / _lcm);
+	const z2 = x2 / (y2 / _lcm);
+	return [z1 - z2, _lcm];
 };
 
 export const fractionMultiply = (

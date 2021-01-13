@@ -1,8 +1,11 @@
 import {
 	factorial,
+	formulaReplace,
 	fractionAdd,
 	fractionDivide,
 	fractionMultiply,
+	fractionNot,
+	fractionSubtract,
 } from "../helpers/math";
 import { useEffect, useState } from "react";
 
@@ -20,7 +23,6 @@ import InputXnr from "../components/InputXnr";
 import Minus from "../components/Minus";
 import Multiply from "../components/Multiply";
 import Plus from "../components/Plus";
-import { formulaReplace } from "../helpers/math";
 
 const VTildenr = () => {
 	const [n, setN] = useState(null);
@@ -157,7 +159,7 @@ const ANot = () => {
 
 	let equals = null;
 	if (A1 !== null && A2 !== null) {
-		const [highSolved, lowSolved] = [A2 - A1, A2];
+		const [highSolved, lowSolved] = fractionNot(A1, A2);
 		equals = (
 			<>
 				<Equals />
@@ -178,7 +180,7 @@ const ANot = () => {
 	);
 };
 
-const AOrB = ({ exclusive }) => {
+const AOrB = () => {
 	const [A1, setA1] = useState(1);
 	const [A2, setA2] = useState(null);
 	const [B1, setB1] = useState(1);
@@ -220,12 +222,63 @@ const AOrB = ({ exclusive }) => {
 			<Plus />
 			<Division high={highB} low={lowB} />
 			{equals}
-			{!exclusive ? (
-				<>
-					<Minus />
-					<>P(A AND B)</>
-				</>
-			) : null}
+		</Equation>
+	);
+};
+
+const AOrBIndependent = () => {
+	const [A1, setA1] = useState(1);
+	const [A2, setA2] = useState(null);
+	const [B1, setB1] = useState(1);
+	const [B2, setB2] = useState(null);
+	const setAB = (A1, A2, B1, B2) => {
+		setA1(A1);
+		setA2(A2);
+		setB1(B1);
+		setB2(B2);
+	};
+	const highA = formulaReplace("A1", { A1 });
+	const lowA = formulaReplace("A2", { A2 });
+	const highB = formulaReplace("B1", { B1 });
+	const lowB = formulaReplace("B2", { B2 });
+
+	let equals = null;
+	if (A1 !== null && A2 !== null && B1 !== null && B2 !== null) {
+		const [highLeft, lowLeft] = fractionAdd(A1, A2, B1, B2);
+		const [highRight, lowRight] = fractionMultiply(A1, A2, B1, B2);
+		const [highSolved, lowSolved] = fractionSubtract(
+			highLeft,
+			lowLeft,
+			highRight,
+			lowRight
+		);
+		equals = (
+			<>
+				<Equals />
+				<DivisionSimplifier high={highSolved} low={lowSolved} />
+			</>
+		);
+	}
+	return (
+		<Equation>
+			<InputDualProbability
+				letter="&nbsp;P"
+				separator="OR"
+				A1={A1}
+				A2={A2}
+				B1={B1}
+				B2={B2}
+				onChange={setAB}
+			/>
+			<Equals />
+			<Division high={highA} low={lowA} />
+			<Plus />
+			<Division high={highB} low={lowB} />
+			<Minus />
+			<Division high={highA} low={lowA} />
+			<Multiply />
+			<Division high={highB} low={lowB} />
+			{equals}
 		</Equation>
 	);
 };
@@ -276,7 +329,7 @@ const AAndBIndependent = () => {
 	);
 };
 
-const AWhenBIndependent = () => {
+const AWhenNotBIndependent = () => {
 	const [A1, setA1] = useState(1);
 	const [A2, setA2] = useState(null);
 	const [B1, setB1] = useState(1);
@@ -294,8 +347,8 @@ const AWhenBIndependent = () => {
 
 	let equals = null;
 	if (A1 !== null && A2 !== null && B1 !== null && B2 !== null) {
-		const [highHigh, highLow] = fractionMultiply(A1, A2, B1, B2);
-		const [highSolved, lowSolved] = fractionDivide(highHigh, highLow, B1, B2);
+		const [highRight, lowRight] = fractionNot(B1, B2);
+		const [highSolved, lowSolved] = fractionDivide(A1, A2, highRight, lowRight);
 		equals = (
 			<>
 				<Equals />
@@ -307,7 +360,7 @@ const AWhenBIndependent = () => {
 		<Equation>
 			<InputDualProbability
 				letter="&nbsp;P"
-				separator="|"
+				separator="|!"
 				A1={A1}
 				A2={A2}
 				B1={B1}
@@ -315,13 +368,13 @@ const AWhenBIndependent = () => {
 				onChange={setAB}
 			/>
 			<Equals />
-			<BracketLeft />
 			<Division high={highA} low={lowA} />
-			<Multiply />
+			<Divide />
+			<BracketLeft />
+			1
+			<Minus />
 			<Division high={highB} low={lowB} />
 			<BracketRight />
-			<Divide />
-			<Division high={highB} low={lowB} />
 			{equals}
 		</Equation>
 	);
@@ -442,17 +495,37 @@ const PageHome = () => {
 			<h3>Order = NO, Repetition = NO</h3>
 			<CTildenr />
 			<h1 id="probabilities">2. Probabilities, always in [0, 1]</h1>
-			<h3>Reverse A</h3>
+			<h3>NOT A</h3>
 			<ANot />
-			<h3>A or B, Mutually exclusive = YES</h3>
-			<AOrB exclusive={true} />
-			<h3>A or B, Mutually exclusive = NO</h3>
-			<AOrB exclusive={false} />
-			<h3>A and B, Independent = YES</h3>
+			<h3>A OR B, Exclusive = YES, Independent = NO</h3>
+			<AOrB />
+			<h3>A OR B, Exclusive = NO, Independent = YES</h3>
+			<AOrBIndependent />
+			<h3>A AND B, Exclusive = YES, Independent = NO</h3>
+			<Equation>
+				&nbsp;P(A AND B)
+				<Equals /> 0
+			</Equation>
+			<h3>A AND B, Exclusive = NO, Independent = YES</h3>
 			<AAndBIndependent />
-			<h3>A when B, Independent = YES</h3>
-			<AWhenBIndependent />
-			<h1 id="total">3. Total probability</h1>
+			<h3>A GIVEN B, Exclusive = YES, Independent = NO</h3>
+			<Equation>
+				&nbsp;P(A | B)
+				<Equals /> 0
+			</Equation>
+			<h3>A GIVEN NOT B, Exclusive = YES, Independent = NO</h3>
+			<AWhenNotBIndependent />
+			<h3>A GIVEN B, Exclusive = NO, Independent = YES</h3>
+			<Equation>
+				&nbsp;P(A | B)
+				<Equals /> P(A)
+			</Equation>
+			<h3>A GIVEN NOT B, Exclusive = NO, Independent = YES</h3>
+			<Equation>
+				&nbsp;P(A |!B)
+				<Equals /> P(A)
+			</Equation>
+			<h1 id="totalprobability">3. Total probability</h1>
 			<TotalProbability />
 			Theory of Statistics
 		</>
