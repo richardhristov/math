@@ -1,0 +1,20 @@
+.xnr {
+	display: flex;
+	align-items: center;
+
+	&__letter {
+		margin-right: 5px;
+	}
+
+	&__inputs {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+
+		width: 50px;
+
+		input {
+			width: 100%;
+		}
+	}
+}

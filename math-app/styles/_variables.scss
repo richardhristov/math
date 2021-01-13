@@ -1,0 +1,41 @@
+// Style variables are defined here for easy editing
+// The following prefixes are used:
+// c  = color
+// s  = second
+// ff = font-family
+// px = pixel
+// bg = background
+// fg = foreground i.e. text color
+// br = breakpoint
+// tr = transiton
+// z  = z-index
+
+// Define colors first
+$c-fg: #000000;
+$c-bg: #ffffff;
+
+// Fonts
+$ff-text: Roboto, sans-serif;
+$ff-text-hi: $ff-text;
+$ff-text-bold: $ff-text;
+$ff-input: $ff-text;
+$ff-input-label: $ff-text;
+$ff-input-subtitle: $ff-text;
+
+// Font Sizes
+$px-text: 14px;
+$px-text-small: 12px;
+
+// Breakpoints
+$px-br-desktop: 768px;
+$px-br-wide: 1200px;
+
+// Transitions
+$s-tr-fast: 0.25s;
+$s-tr-medium: 0.5s;
+$s-tr-slow: 1s;
+
+// Z-indexes
+$z-header: 100;
+$z-modal: 1000;
+$z-modal-backdrop: 1000;

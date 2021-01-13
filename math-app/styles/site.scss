@@ -1,0 +1,18 @@
+// Variables
+@import "variables";
+
+// Base
+@import "base/reset";
+@import "base/util";
+@import "base/typography";
+
+// Components
+@import "components/equation";
+@import "components/xnr";
+@import "components/symbol";
+@import "components/division";
+@import "components/probability";
+
+body {
+	background-color: $c-bg;
+}

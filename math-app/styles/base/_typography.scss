@@ -1,0 +1,52 @@
+body {
+	color: $c-fg;
+	background-color: $c-bg;
+
+	font-size: $px-text;
+	font-family: $ff-text;
+	font-weight: normal;
+}
+
+a {
+	text-decoration: none;
+	color: $c-fg;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: $ff-text-hi;
+}
+
+strong,
+b {
+	font-family: $ff-text-bold;
+}
+
+.ff-bold {
+	font-family: $ff-text-bold;
+}
+
+input,
+button {
+	font-family: $ff-text;
+}
+
+small {
+	font-size: $px-text-small;
+}
+
+.text-left {
+	text-align: left !important;
+}
+
+.text-center {
+	text-align: center !important;
+}
+
+.text-right {
+	text-align: right !important;
+}

@@ -1,0 +1,25 @@
+.division {
+	text-align: center;
+	font-size: 14px;
+
+	&__high {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		padding-bottom: 3px;
+		border-bottom: 1px solid #222;
+	}
+
+	&__low {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		padding-top: 2px;
+	}
+
+	.division {
+		width: 100%;
+	}
+}
