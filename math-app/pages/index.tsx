@@ -380,6 +380,67 @@ const AWhenNotBIndependent = () => {
 	);
 };
 
+const AWhenBGivenAB = () => {
+	const [AB1, setAB1] = useState(1);
+	const [AB2, setAB2] = useState(null);
+	const [B1, setB1] = useState(1);
+	const [B2, setB2] = useState(null);
+	const setAB = (AB1, AB2) => {
+		setAB1(AB1);
+		setAB2(AB2);
+	};
+	const setB = (B1, B2) => {
+		setB1(B1);
+		setB2(B2);
+	};
+	const highAB = formulaReplace("AB1", { AB1 });
+	const lowAB = formulaReplace("AB2", { AB2 });
+	const highB = formulaReplace("B1", { B1 });
+	const lowB = formulaReplace("B2", { B2 });
+
+	let equals = null;
+	if (AB1 !== null && AB2 !== null && B1 !== null && B2 !== null) {
+		const [highSolved, lowSolved] = fractionDivide(AB1, AB2, B1, B2);
+		equals = (
+			<>
+				<Equals />
+				<DivisionSimplifier high={highSolved} low={lowSolved} />
+			</>
+		);
+	}
+	return (
+		<Equation>
+			<InputSingleProbability
+				letter="&nbsp;P"
+				prefix="A|"
+				A1={B1}
+				A2={B2}
+				placeholderA1="B1"
+				placeholderA2="B2"
+				onChange={setB}
+			/>
+			<Equals />
+			<Division
+				high={
+					<InputSingleProbability
+						A1={AB1}
+						A2={AB2}
+						placeholderA1="AB1"
+						placeholderA2="AB2"
+						onChange={setAB}
+					/>
+				}
+				low={<Division high={highB} low={lowB} />}
+			/>
+			<Equals />
+			<Division high={highAB} low={lowAB} />
+			<Divide />
+			<Division high={highB} low={lowB} />
+			{equals}
+		</Equation>
+	);
+};
+
 const TotalProbability = () => {
 	const [n, setN] = useState(2);
 	const [states, setStates] = useState([]);
@@ -508,23 +569,25 @@ const PageHome = () => {
 			</Equation>
 			<h3>A AND B, Exclusive = NO, Independent = YES</h3>
 			<AAndBIndependent />
-			<h3>A GIVEN B, Exclusive = YES, Independent = NO</h3>
+			<h3>A WHEN B, Exclusive = YES, Independent = NO</h3>
 			<Equation>
 				&nbsp;P(A | B)
 				<Equals /> 0
 			</Equation>
-			<h3>A GIVEN NOT B, Exclusive = YES, Independent = NO</h3>
+			<h3>A WHEN NOT B, Exclusive = YES, Independent = NO</h3>
 			<AWhenNotBIndependent />
-			<h3>A GIVEN B, Exclusive = NO, Independent = YES</h3>
+			<h3>A WHEN B, Exclusive = NO, Independent = YES</h3>
 			<Equation>
 				&nbsp;P(A | B)
 				<Equals /> P(A)
 			</Equation>
-			<h3>A GIVEN NOT B, Exclusive = NO, Independent = YES</h3>
+			<h3>A WHEN NOT B, Exclusive = NO, Independent = YES</h3>
 			<Equation>
 				&nbsp;P(A |!B)
 				<Equals /> P(A)
 			</Equation>
+			<h3>A WHEN B GIVEN B AB, Exclusive = NO, Independent = YES</h3>
+			<AWhenBGivenAB />
 			<h1 id="totalprobability">3. Total probability</h1>
 			<TotalProbability />
 			Theory of Statistics

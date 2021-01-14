@@ -9,6 +9,7 @@ export interface InputSingleProbabilityProps {
 	placeholderA1?: string;
 	placeholderA2?: string;
 	prefix?: string;
+	suffix?: string;
 }
 
 const InputSingleProbability: FC<InputSingleProbabilityProps> = ({
@@ -19,6 +20,7 @@ const InputSingleProbability: FC<InputSingleProbabilityProps> = ({
 	placeholderA1 = "A1",
 	placeholderA2 = "A2",
 	prefix,
+	suffix,
 }) => {
 	const inputA = (
 		<Division
@@ -45,7 +47,8 @@ const InputSingleProbability: FC<InputSingleProbabilityProps> = ({
 	return (
 		<div className="probability probability--dual">
 			{letter}({prefix || ""}
-			{inputA})
+			{inputA}
+			{suffix || ""})
 		</div>
 	);
 };
