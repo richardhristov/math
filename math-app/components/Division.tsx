@@ -6,6 +6,12 @@ export interface DivisionProps {
 }
 
 const Division: FC<DivisionProps> = ({ high, low }) => {
+	if (typeof high === "number") {
+		high = high.toString();
+	}
+	if (typeof low === "number") {
+		low = low.toString();
+	}
 	return (
 		<div className="division">
 			<div className="division__high">{high}</div>

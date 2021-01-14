@@ -17,9 +17,12 @@ const DivisionSimplifier: FC<DivisionSimpliferProps> = ({ high, low }) => {
 			<>
 				<Equals />
 				{lowSimplified !== 1 ? (
-					<Division high={highSimplified} low={lowSimplified} />
+					<Division
+						high={highSimplified.toString()}
+						low={lowSimplified.toString()}
+					/>
 				) : (
-					<div className="division">{highSimplified}</div>
+					<div className="division">{highSimplified.toString()}</div>
 				)}
 			</>
 		);
@@ -27,9 +30,9 @@ const DivisionSimplifier: FC<DivisionSimpliferProps> = ({ high, low }) => {
 	return (
 		<>
 			{low !== 1 ? (
-				<Division high={high} low={low} />
+				<Division high={high.toString()} low={low.toString()} />
 			) : (
-				<div className="division">{high}</div>
+				<div className="division">{high.toString()}</div>
 			)}
 			{equals}
 		</>

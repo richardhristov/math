@@ -2,7 +2,7 @@ import Division from "./Division";
 import { FC } from "react";
 
 export interface InputSingleProbabilityProps {
-	letter?: string;
+	letter?: string | JSX.Element;
 	A1: number;
 	A2: number;
 	onChange: (A1: number, A2: number) => void;

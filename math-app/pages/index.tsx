@@ -148,8 +148,9 @@ const CTildenr = () => {
 };
 
 const ANot = () => {
-	const [A1, setA1] = useState(1);
+	const [A1, setA1] = useState(null);
 	const [A2, setA2] = useState(null);
+	useEffect(() => setA1(1), []);
 	const setA = (A1, A2) => {
 		setA1(A1);
 		setA2(A2);
@@ -181,10 +182,12 @@ const ANot = () => {
 };
 
 const AOrB = () => {
-	const [A1, setA1] = useState(1);
+	const [A1, setA1] = useState(null);
 	const [A2, setA2] = useState(null);
-	const [B1, setB1] = useState(1);
+	const [B1, setB1] = useState(null);
 	const [B2, setB2] = useState(null);
+	useEffect(() => setA1(1), []);
+	useEffect(() => setB1(1), []);
 	const setAB = (A1, A2, B1, B2) => {
 		setA1(A1);
 		setA2(A2);
@@ -227,10 +230,12 @@ const AOrB = () => {
 };
 
 const AOrBIndependent = () => {
-	const [A1, setA1] = useState(1);
+	const [A1, setA1] = useState(null);
 	const [A2, setA2] = useState(null);
-	const [B1, setB1] = useState(1);
+	const [B1, setB1] = useState(null);
 	const [B2, setB2] = useState(null);
+	useEffect(() => setA1(1), []);
+	useEffect(() => setB1(1), []);
 	const setAB = (A1, A2, B1, B2) => {
 		setA1(A1);
 		setA2(A2);
@@ -284,10 +289,12 @@ const AOrBIndependent = () => {
 };
 
 const AAndBIndependent = () => {
-	const [A1, setA1] = useState(1);
+	const [A1, setA1] = useState(null);
 	const [A2, setA2] = useState(null);
-	const [B1, setB1] = useState(1);
+	const [B1, setB1] = useState(null);
 	const [B2, setB2] = useState(null);
+	useEffect(() => setA1(1), []);
+	useEffect(() => setB1(1), []);
 	const setAB = (A1, A2, B1, B2) => {
 		setA1(A1);
 		setA2(A2);
@@ -330,10 +337,12 @@ const AAndBIndependent = () => {
 };
 
 const AWhenNotBIndependent = () => {
-	const [A1, setA1] = useState(1);
+	const [A1, setA1] = useState(null);
 	const [A2, setA2] = useState(null);
-	const [B1, setB1] = useState(1);
+	const [B1, setB1] = useState(null);
 	const [B2, setB2] = useState(null);
+	useEffect(() => setA1(1), []);
+	useEffect(() => setB1(1), []);
 	const setAB = (A1, A2, B1, B2) => {
 		setA1(A1);
 		setA2(A2);
@@ -381,10 +390,12 @@ const AWhenNotBIndependent = () => {
 };
 
 const AWhenBGivenAB = () => {
-	const [AB1, setAB1] = useState(1);
+	const [AB1, setAB1] = useState(null);
 	const [AB2, setAB2] = useState(null);
-	const [B1, setB1] = useState(1);
+	const [B1, setB1] = useState(null);
 	const [B2, setB2] = useState(null);
+	useEffect(() => setAB1(1), []);
+	useEffect(() => setB1(1), []);
 	const setAB = (AB1, AB2) => {
 		setAB1(AB1);
 		setAB2(AB2);
@@ -474,10 +485,10 @@ const TotalProbability = () => {
 		const B1 = (states[i] || [])[2];
 		const B2 = (states[i] || [])[3];
 		othersComponents.push(
-			<>
+			<span key={i}>
 				<InputSingleProbability
-					letter="P"
-					prefix={`A | B${i} = `}
+					letter={i === 0 ? <>&nbsp;P</> : "P"}
+					prefix={`A | B${i + 1} = `}
 					A1={A1}
 					A2={A2}
 					onChange={(A1, A2) => setA(A1, A2, i)}
@@ -487,20 +498,20 @@ const TotalProbability = () => {
 					letter="P"
 					A1={B1}
 					A2={B2}
-					placeholderA1={`B${i}1`}
-					placeholderA2={`B${i}2`}
+					placeholderA1={`B${i + 1}1`}
+					placeholderA2={`B${i + 1}2`}
 					onChange={(B1, B2) => setB(B1, B2, i)}
 				/>
 				{i < n - 1 ? <Multiply /> : null}
-			</>
+			</span>
 		);
 		othersSumComponents.push(
-			<>
+			<span key={i}>
 				<Division high={A1} low={A2} />
 				<Multiply />
 				<Division high={B1} low={B2} />
 				{i < n - 1 ? <Plus /> : null}
-			</>
+			</span>
 		);
 		if (A1 === null || A2 === null || B1 === null || B2 === null) {
 			hasNull = true;
@@ -523,12 +534,14 @@ const TotalProbability = () => {
 
 	return (
 		<>
-			n =
-			<input
-				type="number"
-				value={n}
-				onChange={(e) => setN(e.target.valueAsNumber)}
-			/>
+			<Equation>
+				&nbsp;n <Equals />
+				<input
+					type="number"
+					value={n}
+					onChange={(e) => setN(e.target.valueAsNumber)}
+				/>
+			</Equation>
 			<Equation>
 				{othersComponents}
 				<Equals />
@@ -539,22 +552,33 @@ const TotalProbability = () => {
 	);
 };
 
-const PageHome = () => {
+const Permutations = () => {
 	return (
 		<>
-			<Head>
-				<title>Math</title>
-			</Head>
 			<h1 id="permutations">0. Permutations</h1>
 			<h3>Order = YES, Repetition = YES</h3>
 			<VTildenr />
 			<h3>Order = YES, Repetition = NO</h3>
 			<Vnr />
+		</>
+	);
+};
+
+const Combinations = () => {
+	return (
+		<>
 			<h1 id="combinations">1. Combinations</h1>
 			<h3>Order = NO, Repetition = YES</h3>
 			<Cnr />
 			<h3>Order = NO, Repetition = NO</h3>
 			<CTildenr />
+		</>
+	);
+};
+
+const Probabilities = () => {
+	return (
+		<>
 			<h1 id="probabilities">2. Probabilities, always in [0, 1]</h1>
 			<h3>NOT A</h3>
 			<ANot />
@@ -588,9 +612,37 @@ const PageHome = () => {
 			</Equation>
 			<h3>A WHEN B GIVEN B AB, Exclusive = NO, Independent = YES</h3>
 			<AWhenBGivenAB />
-			<h1 id="totalprobability">3. Total probability</h1>
+		</>
+	);
+};
+
+const NProbabilities = () => {
+	return (
+		<>
+			<h1 id="n-probabilies">3. N probabilities</h1>
+			<h3>Total probability</h3>
 			<TotalProbability />
-			Theory of Statistics
+			<h3>Bernouli's attempts</h3>
+			TODO
+			<h3>Binomial probability</h3>
+			TODO
+		</>
+	);
+};
+
+const PageHome = () => {
+	return (
+		<>
+			<Head>
+				<title>Math</title>
+			</Head>
+			<div className="content" style={{ marginLeft: "14px" }}>
+				<Permutations />
+				<Combinations />
+				<Probabilities />
+				<NProbabilities />
+				<p>Theory of Statistics</p>
+			</div>
 		</>
 	);
 };

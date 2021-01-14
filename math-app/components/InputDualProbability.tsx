@@ -2,7 +2,7 @@ import Division from "./Division";
 import { FC } from "react";
 
 export interface InputDualProbabilityProps {
-	letter?: string;
+	letter?: string | JSX.Element;
 	separator: string;
 	A1: number;
 	A2: number;
