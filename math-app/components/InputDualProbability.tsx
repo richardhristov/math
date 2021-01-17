@@ -35,7 +35,7 @@ const InputDualProbability: FC<InputDualProbabilityProps> = ({
 					className="probability__A"
 					placeholder={placeholderA1}
 					type="number"
-					value={A1 || ""}
+					value={typeof A1 === "number" ? A1 : ""}
 					onChange={(e) => onChange(e.target.valueAsNumber, A2, B1, B2)}
 				/>
 			}
@@ -44,7 +44,7 @@ const InputDualProbability: FC<InputDualProbabilityProps> = ({
 					className="probability__A"
 					placeholder={placeholderA2}
 					type="number"
-					value={A2 || ""}
+					value={typeof A2 === "number" ? A2 : ""}
 					onChange={(e) => onChange(A1, e.target.valueAsNumber, B1, B2)}
 				/>
 			}
@@ -57,7 +57,7 @@ const InputDualProbability: FC<InputDualProbabilityProps> = ({
 					className="probability__B"
 					placeholder={placeholderB1}
 					type="number"
-					value={B1 || ""}
+					value={typeof B1 === "number" ? B1 : ""}
 					onChange={(e) => onChange(A1, A2, e.target.valueAsNumber, B2)}
 				/>
 			}
@@ -66,7 +66,7 @@ const InputDualProbability: FC<InputDualProbabilityProps> = ({
 					className="probability__B"
 					placeholder={placeholderB2}
 					type="number"
-					value={B2 || ""}
+					value={typeof B2 === "number" ? B2 : ""}
 					onChange={(e) => onChange(A1, A2, B1, e.target.valueAsNumber)}
 				/>
 			}

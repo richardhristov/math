@@ -141,8 +141,12 @@ const Cnr = () => {
 		equals = (
 			<>
 				<Equals />
-				<Division high={highSimplified} low={lowSimplified} />
-				<Equals />
+				{r !== 0 ? (
+					<>
+						<Division high={highSimplified} low={lowSimplified} />
+						<Equals />
+					</>
+				) : null}
 				<DivisionSimplifier high={highSolved} low={lowSolved} />
 			</>
 		);
@@ -562,7 +566,7 @@ const TotalProbability = () => {
 	);
 };
 
-const BernoulisAttempts = () => {
+const BinomialProbability = () => {
 	const [n, setN] = useState(null);
 	const [k, setK] = useState(null);
 	const [A1, setA1] = useState(null);
@@ -582,7 +586,7 @@ const BernoulisAttempts = () => {
 	const powerNMinusK = formulaReplace("n - k", { n, k });
 
 	let equals = null;
-	if (A1 !== null && A2 !== null && n !== null && k !== null) {
+	if (A1 !== null && A2 !== null && n !== null && k !== null && n > 0) {
 		const [highC, lowC] = fractionSolveCombination(n, k);
 		const [highPPower, lowPPower] = fractionPower(A1, A2, k);
 		const [highNotP, lowNotP] = fractionNot(A1, A2);
@@ -620,7 +624,7 @@ const BernoulisAttempts = () => {
 	}
 	return (
 		<Equation>
-			<InputXn letter="&nbsp;P(" n={n} onChange={setN} />
+			<InputXn letter="&nbsp;P(" n={k} placeholderN="k" onChange={setK} />
 			<BracketRight />
 			<Equals />
 			<InputXnr letter="C" n={n} r={k} onChange={setNK} placeholderR="k" />
@@ -710,11 +714,13 @@ const Probabilities = () => {
 const NProbabilities = () => {
 	return (
 		<>
-			<h1 id="n-probabilies">3. N probabilities</h1>
-			<h3>Total probability</h3>
+			<h1 id="n-probabilies">3. N Probabilities</h1>
+			<h3>Total Probability</h3>
 			<TotalProbability />
-			<h3>Bernouli's attempts/Binomial Probability</h3>
-			<BernoulisAttempts />
+			<h3>Bernouli's Attempts/Binomial Probability</h3>
+			<BinomialProbability />
+			<h3>Binomial Probability find N</h3>
+			Use the Bernouli's Attempts calculator, put k = 0 and brute force N
 		</>
 	);
 };

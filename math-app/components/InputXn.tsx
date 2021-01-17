@@ -22,7 +22,7 @@ const InputXn: FC<InputXnProps> = ({
 					className="xnr__n"
 					placeholder={placeholderN}
 					type="number"
-					value={n || ""}
+					value={typeof n === "number" ? n : ""}
 					onChange={(e) => onChange(e.target.valueAsNumber)}
 				/>
 			</div>

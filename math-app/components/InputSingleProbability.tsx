@@ -29,7 +29,7 @@ const InputSingleProbability: FC<InputSingleProbabilityProps> = ({
 					className="probability__A"
 					placeholder={placeholderA1}
 					type="number"
-					value={A1 || ""}
+					value={typeof A1 === "number" ? A1 : ""}
 					onChange={(e) => onChange(e.target.valueAsNumber, A2)}
 				/>
 			}
@@ -38,7 +38,7 @@ const InputSingleProbability: FC<InputSingleProbabilityProps> = ({
 					className="probability__A"
 					placeholder={placeholderA2}
 					type="number"
-					value={A2 || ""}
+					value={typeof A2 === "number" ? A2 : ""}
 					onChange={(e) => onChange(A1, e.target.valueAsNumber)}
 				/>
 			}

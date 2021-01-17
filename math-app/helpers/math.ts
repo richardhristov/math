@@ -63,6 +63,9 @@ export const fractionDivide = (a: number, b: number, c: number, d: number) => [
 ];
 
 export const fractionSolveCombination = (n: number, r: number) => {
+	if (r === 0) {
+		return [1, 1];
+	}
 	let nn = n;
 	for (let i = n - 1; i > n - r; i--) {
 		nn = nn * i;
