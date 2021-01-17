@@ -5,6 +5,8 @@ import {
 	fractionDivide,
 	fractionMultiply,
 	fractionNot,
+	fractionPower,
+	fractionSolveCombination,
 	fractionSubtract,
 } from "../helpers/math";
 import { useEffect, useState } from "react";
@@ -19,10 +21,12 @@ import Equation from "../components/Equation";
 import Head from "next/head";
 import InputDualProbability from "../components/InputDualProbability";
 import InputSingleProbability from "../components/InputSingleProbability";
+import InputXn from "../components/InputXn";
 import InputXnr from "../components/InputXnr";
 import Minus from "../components/Minus";
 import Multiply from "../components/Multiply";
 import Plus from "../components/Plus";
+import Power from "../components/Power";
 
 const VTildenr = () => {
 	const [n, setN] = useState(null);
@@ -84,37 +88,6 @@ const Vnr = () => {
 	);
 };
 
-const Cnr = () => {
-	const [n, setN] = useState(null);
-	const [r, setR] = useState(null);
-	const setNR = (n, r) => {
-		setN(n);
-		setR(r);
-	};
-	const high = formulaReplace("n!", { n });
-	const low = formulaReplace("r!(n - r)!", { n, r });
-
-	let equals = null;
-	if (n !== null && r !== null) {
-		const highSolved = factorial(n);
-		const lowSolved = factorial(r) * factorial(n - r);
-		equals = (
-			<>
-				<Equals />
-				<DivisionSimplifier high={highSolved} low={lowSolved} />
-			</>
-		);
-	}
-	return (
-		<Equation>
-			<InputXnr letter="&nbsp;C" n={n} r={r} onChange={setNR} />
-			<Equals />
-			<Division high={high} low={low} />
-			{equals}
-		</Equation>
-	);
-};
-
 const CTildenr = () => {
 	const [n, setN] = useState(null);
 	const [r, setR] = useState(null);
@@ -140,6 +113,43 @@ const CTildenr = () => {
 	return (
 		<Equation>
 			<InputXnr letter="~C" n={n} r={r} onChange={setNR} />
+			<Equals />
+			<Division high={high} low={low} />
+			{equals}
+		</Equation>
+	);
+};
+
+const Cnr = () => {
+	const [n, setN] = useState(null);
+	const [r, setR] = useState(null);
+	const setNR = (n, r) => {
+		setN(n);
+		setR(r);
+	};
+	const high = formulaReplace("n!", { n });
+	const low = formulaReplace("r!(n - r)!", { n, r });
+
+	let equals = null;
+	if (n !== null && r !== null && n >= r) {
+		const lowSimplified = formulaReplace("r!", { r });
+		let highSimplified = n;
+		for (let i = n - 1; i > n - r; i--) {
+			highSimplified = highSimplified + "." + i;
+		}
+		const [highSolved, lowSolved] = fractionSolveCombination(n, r);
+		equals = (
+			<>
+				<Equals />
+				<Division high={highSimplified} low={lowSimplified} />
+				<Equals />
+				<DivisionSimplifier high={highSolved} low={lowSolved} />
+			</>
+		);
+	}
+	return (
+		<Equation>
+			<InputXnr letter="&nbsp;C" n={n} r={r} onChange={setNR} />
 			<Equals />
 			<Division high={high} low={low} />
 			{equals}
@@ -552,6 +562,87 @@ const TotalProbability = () => {
 	);
 };
 
+const BernoulisAttempts = () => {
+	const [n, setN] = useState(null);
+	const [k, setK] = useState(null);
+	const [A1, setA1] = useState(null);
+	const [A2, setA2] = useState(null);
+	useEffect(() => setA1(1), []);
+	const setNK = (N, K) => {
+		setN(N);
+		setK(K);
+	};
+	const setA = (A1, A2) => {
+		setA1(A1);
+		setA2(A2);
+	};
+	const highA = formulaReplace("A1", { A1 });
+	const lowA = formulaReplace("A2", { A2 });
+	const powerK = formulaReplace("k", { k });
+	const powerNMinusK = formulaReplace("n - k", { n, k });
+
+	let equals = null;
+	if (A1 !== null && A2 !== null && n !== null && k !== null) {
+		const [highC, lowC] = fractionSolveCombination(n, k);
+		const [highPPower, lowPPower] = fractionPower(A1, A2, k);
+		const [highNotP, lowNotP] = fractionNot(A1, A2);
+		const nMinusK = n - k;
+		const [highNotPPower, lowNotPPower] = fractionPower(
+			highNotP,
+			lowNotP,
+			nMinusK
+		);
+		const [highSolved1, lowSolved1] = fractionMultiply(
+			highC,
+			lowC,
+			highPPower,
+			lowPPower
+		);
+		const [highSolved, lowSolved] = fractionMultiply(
+			highNotPPower,
+			lowNotPPower,
+			highSolved1,
+			lowSolved1
+		);
+		equals = (
+			<>
+				<Equals />
+				<Division high={highC} low={lowC} />
+				<Multiply />
+				<Division high={highPPower} low={lowPPower} />
+				<Multiply />
+				<Division high={highNotP} low={lowNotP} />
+				<Power>{nMinusK}</Power>
+				<Equals />
+				<DivisionSimplifier high={highSolved} low={lowSolved} />
+			</>
+		);
+	}
+	return (
+		<Equation>
+			<InputXn letter="&nbsp;P(" n={n} onChange={setN} />
+			<BracketRight />
+			<Equals />
+			<InputXnr letter="C" n={n} r={k} onChange={setNK} placeholderR="k" />
+			<Multiply />
+			<InputSingleProbability letter="" A1={A1} A2={A2} onChange={setA} />
+			<Power>{powerK}</Power>
+			<Multiply />
+			<BracketLeft />
+			1
+			<Minus />
+			<Division high={highA} low={lowA} />
+			<BracketRight />
+			<Power>
+				<BracketLeft />
+				{powerNMinusK}
+				<BracketRight />
+			</Power>
+			{equals}
+		</Equation>
+	);
+};
+
 const Permutations = () => {
 	return (
 		<>
@@ -569,9 +660,9 @@ const Combinations = () => {
 		<>
 			<h1 id="combinations">1. Combinations</h1>
 			<h3>Order = NO, Repetition = YES</h3>
-			<Cnr />
-			<h3>Order = NO, Repetition = NO</h3>
 			<CTildenr />
+			<h3>Order = NO, Repetition = NO</h3>
+			<Cnr />
 		</>
 	);
 };
@@ -622,10 +713,8 @@ const NProbabilities = () => {
 			<h1 id="n-probabilies">3. N probabilities</h1>
 			<h3>Total probability</h3>
 			<TotalProbability />
-			<h3>Bernouli's attempts</h3>
-			TODO
-			<h3>Binomial probability</h3>
-			TODO
+			<h3>Bernouli's attempts/Binomial Probability</h3>
+			<BernoulisAttempts />
 		</>
 	);
 };

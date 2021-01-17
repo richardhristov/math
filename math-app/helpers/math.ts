@@ -61,3 +61,19 @@ export const fractionDivide = (a: number, b: number, c: number, d: number) => [
 	a * d,
 	b * c,
 ];
+
+export const fractionSolveCombination = (n: number, r: number) => {
+	let nn = n;
+	for (let i = n - 1; i > n - r; i--) {
+		nn = nn * i;
+	}
+	return [nn, factorial(r)];
+};
+
+export const fractionPower = (a: number, b: number, k: number) => {
+	if (k <= 1) {
+		return [a, b];
+	}
+	const [c, d] = fractionPower(a, b, k - 1);
+	return fractionMultiply(a, b, c, d);
+};
