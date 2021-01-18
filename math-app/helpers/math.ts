@@ -74,6 +74,9 @@ export const fractionSolveCombination = (n: number, r: number) => {
 };
 
 export const fractionPower = (a: number, b: number, k: number) => {
+	if (k === 0) {
+		return [1, 1];
+	}
 	if (k <= 1) {
 		return [a, b];
 	}
