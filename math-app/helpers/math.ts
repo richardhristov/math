@@ -11,7 +11,8 @@ export const formulaReplace = (text: string, replace: any) => {
 	return text;
 };
 
-export const factorial = (n: number) => (n <= 1 ? 1 : n * factorial(n - 1));
+export const factorial = (n: number) =>
+	n <= 1 || isNaN(n) ? 1 : n * factorial(n - 1);
 
 export const gcd = (a: number, b: number) => (b ? gcd(b, a % b) : a);
 
