@@ -647,6 +647,167 @@ const BinomialProbability = () => {
 	);
 };
 
+const FreeWeightsTable = () => {
+	const [n, setN] = useState(1);
+	const [states, setStates] = useState([]);
+	const setA = (A1, A2, idx) => {
+		const _states = [...states];
+		_states[idx][0] = A1;
+		_states[idx][1] = A2;
+		setStates(_states);
+	};
+	const setB = (A1, A2, idx) => {
+		const _states = [...states];
+		_states[idx][2] = A1;
+		_states[idx][3] = A2;
+		setStates(_states);
+	};
+	useEffect(() => {
+		const _As = states.slice(0, n);
+		for (let i = _As.length - 1; i < n - 1; i++) {
+			_As.push([1, null, 1, null]);
+		}
+		setStates(_As);
+	}, [n]);
+	const [solA1, setSolA1] = useState(null);
+	const [solA2, setSolA2] = useState(null);
+	const setSolA = (A1, A2) => {
+		setSolA1(A1);
+		setSolA2(A2);
+	};
+
+	const thComponents = [];
+	const tdComponents = [];
+	const notNulls = [];
+	let pSum = 0;
+	for (let i = 0; i < n; i++) {
+		const A1 = (states[i] || [])[0];
+		const A2 = (states[i] || [])[1];
+		const B1 = (states[i] || [])[2];
+		const B2 = (states[i] || [])[3];
+		if (A1 !== null && A2 !== null && B1 !== null && B2 !== null) {
+			notNulls.push(A1, A2, B1, B2);
+			pSum += B1 / B2;
+		}
+		thComponents.push(
+			<InputSingleProbability
+				letter={(i + 1).toString()}
+				A1={A1}
+				A2={A2}
+				placeholderA1={`A${i + 1}1`}
+				placeholderA2={`A${i + 1}2`}
+				onChange={(A1, A2) => setA(A1, A2, i)}
+			/>
+		);
+		tdComponents.push(
+			<InputSingleProbability
+				letter={(i + 1).toString()}
+				A1={B1}
+				A2={B2}
+				placeholderA1={`B${i + 1}1`}
+				placeholderA2={`B${i + 1}2`}
+				onChange={(B1, B2) => setB(B1, B2, i)}
+			/>
+		);
+	}
+
+	const lowestA = states.length > 0 ? states[0][0] / states[0][1] : 0;
+	const highestA =
+		states.length > 0
+			? states[states.length - 1][0] / states[states.length - 1][1]
+			: 0;
+	let solution = null;
+	if (solA1 !== null && solA2 !== null && solA2 !== 0) {
+		if (solA1 / solA2 < lowestA) {
+			solution = (
+				<>
+					<Equals />0
+				</>
+			);
+		} else if (solA1 / solA2 >= highestA) {
+			solution = (
+				<>
+					<Equals />1
+				</>
+			);
+		} else {
+			let sum = [0, 0];
+			for (let i = 0; i < n; i++) {
+				const A1 = (states[i] || [])[0];
+				const A2 = (states[i] || [])[1];
+				const B1 = (states[i] || [])[2];
+				const B2 = (states[i] || [])[3];
+				if (
+					A1 === null ||
+					A2 === null ||
+					B1 === null ||
+					B2 === null ||
+					A2 === 0
+				) {
+					continue;
+				}
+				if (A1 / A2 > solA1 / solA2) {
+					break;
+				}
+				sum = fractionAdd(sum[0], sum[1], B1, B2);
+			}
+			solution = (
+				<>
+					<Equals />
+					<DivisionSimplifier high={sum[0]} low={sum[1]} />
+				</>
+			);
+		}
+	}
+
+	return (
+		<>
+			<Equation>
+				&nbsp;n <Equals />
+				<input
+					type="number"
+					value={n}
+					onChange={(e) => setN(e.target.valueAsNumber)}
+				/>
+			</Equation>
+			<table className="table">
+				<thead>
+					<tr>
+						<th key={-1}>x</th>
+						<th key={-2}>&lt;{lowestA}</th>
+						{thComponents.map((t, idx) => (
+							<th key={idx}>{t}</th>
+						))}
+						<th key={-3}>&gt;={highestA}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td key={-1}>p</td>
+						<td key={-2}>0</td>
+						{tdComponents.map((t, idx) => (
+							<td key={idx}>{t}</td>
+						))}
+						<td key={-3}>1</td>
+					</tr>
+				</tbody>
+			</table>
+			{pSum !== 1 ? `Sum of P is invalid = ${pSum}` : null}
+			<Equation>
+				<InputSingleProbability
+					letter="P"
+					A1={solA1}
+					A2={solA2}
+					placeholderA1="X1"
+					placeholderA2="X2"
+					onChange={setSolA}
+				/>
+				{solution}
+			</Equation>
+		</>
+	);
+};
+
 const Permutations = () => {
 	return (
 		<>
@@ -725,6 +886,16 @@ const NProbabilities = () => {
 	);
 };
 
+const FreeWeights = () => {
+	return (
+		<>
+			<h1 id="n-probabilies">4. Free Weights</h1>
+			<h3>Free Weights/Probability Table</h3>
+			<FreeWeightsTable />
+		</>
+	);
+};
+
 const PageHome = () => {
 	return (
 		<>
@@ -736,6 +907,7 @@ const PageHome = () => {
 				<Combinations />
 				<Probabilities />
 				<NProbabilities />
+				<FreeWeights />
 				<p>Theory of Statistics</p>
 			</div>
 		</>

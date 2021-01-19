@@ -26,6 +26,12 @@ export const fractionSimplify = (numerator: number, denominator: number) => {
 export const fractionNot = (a: number, b: number) => [b - a, b];
 
 export const fractionAdd = (x1: number, y1: number, x2: number, y2: number) => {
+	if (x1 === 0) {
+		return [x2, y2];
+	}
+	if (x2 === 0) {
+		return [x1, y1];
+	}
 	if (y1 === y2) {
 		return [x1 + x2, y1];
 	}
