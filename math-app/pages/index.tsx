@@ -810,12 +810,12 @@ const Fn = ({ xx, yy }) => {
 			<div className="fn__letter">F(x) =</div>
 			<div className="fn__table">
 				<div className="fn__row" key={-1}>
-					<Division high={yy[0][0]} low={yy[0][1]} /> when x &lt; {lowestX}
+					0 when x &lt; {lowestX}
 				</div>
-				{xx.slice(1, -1).map((x, idx) => (
+				{xx.slice(0, -1).map((x, idx) => (
 					<div className="fn__row" key={idx}>
-						<Division high={yy[idx + 1][0]} low={yy[idx + 1][1]} />
-						when {xx[idx]} &lt;= x &lt; {x}
+						<Division high={yy[idx][0]} low={yy[idx][1]} />
+						when {x} &lt;= x &lt; {xx[idx + 1]}
 					</div>
 				))}
 				<div className="fn__row" key={-2}>
