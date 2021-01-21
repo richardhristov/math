@@ -819,7 +819,7 @@ const Fn = ({ xx, yy }) => {
 					</div>
 				))}
 				<div className="fn__row" key={-2}>
-					1 when x &gt; {highestX}
+					1 when x &gt;= {highestX}
 				</div>
 			</div>
 		</div>
