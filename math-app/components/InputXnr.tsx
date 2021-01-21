@@ -1,7 +1,7 @@
 import { FC } from "react";
 
 export interface InputXnrProps {
-	letter: string;
+	letter?: string;
 	n: number;
 	r: number;
 	onChange: (n: number, r: number) => void;

@@ -1,0 +1,24 @@
+.fn {
+	display: flex;
+	align-items: center;
+
+	&__table {
+		border-left: 1px solid black;
+		padding-left: 10px;
+		margin-left: 10px;
+	}
+
+	&__row {
+		display: flex;
+		align-items: center;
+
+		& + & {
+			margin-top: 15px;
+		}
+
+		.division {
+			margin-left: 0;
+			margin-right: 15px;
+		}
+	}
+}

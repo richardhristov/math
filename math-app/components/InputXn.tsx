@@ -1,7 +1,7 @@
 import { FC } from "react";
 
 export interface InputXnProps {
-	letter: string;
+	letter?: string;
 	n: number;
 	onChange: (n: number) => void;
 	placeholderN?: string;

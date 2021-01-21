@@ -6,6 +6,7 @@ import {
 	fractionMultiply,
 	fractionNot,
 	fractionPower,
+	fractionSimplify,
 	fractionSolveCombination,
 	fractionSubtract,
 } from "../helpers/math";
@@ -502,7 +503,7 @@ const TotalProbability = () => {
 			<span key={i}>
 				<InputSingleProbability
 					letter={i === 0 ? <>&nbsp;P</> : "P"}
-					prefix={`A | B${i + 1} = `}
+					prefix={`A | B${i} = `}
 					A1={A1}
 					A2={A2}
 					onChange={(A1, A2) => setA(A1, A2, i)}
@@ -512,8 +513,8 @@ const TotalProbability = () => {
 					letter="P"
 					A1={B1}
 					A2={B2}
-					placeholderA1={`B${i + 1}1`}
-					placeholderA2={`B${i + 1}2`}
+					placeholderA1={`B${i}1`}
+					placeholderA2={`B${i}2`}
 					onChange={(B1, B2) => setB(B1, B2, i)}
 				/>
 				{i < n - 1 ? <Multiply /> : null}
@@ -650,114 +651,119 @@ const BinomialProbability = () => {
 const FreeWeightsTable = () => {
 	const [n, setN] = useState(1);
 	const [states, setStates] = useState([]);
-	const setA = (A1, A2, idx) => {
+	const setX = (x, idx) => {
 		const _states = [...states];
-		_states[idx][0] = A1;
-		_states[idx][1] = A2;
+		_states[idx][0] = x;
 		setStates(_states);
 	};
-	const setB = (A1, A2, idx) => {
+	const setP = (A1, A2, idx) => {
 		const _states = [...states];
-		_states[idx][2] = A1;
-		_states[idx][3] = A2;
+		_states[idx][1] = A1;
+		_states[idx][2] = A2;
 		setStates(_states);
 	};
 	useEffect(() => {
 		const _As = states.slice(0, n);
-		for (let i = _As.length - 1; i < n - 1; i++) {
-			_As.push([1, null, 1, null]);
+		for (let i = _As.length; i < n; i++) {
+			_As.push([i, null, null]);
 		}
 		setStates(_As);
 	}, [n]);
-	const [solA1, setSolA1] = useState(null);
-	const [solA2, setSolA2] = useState(null);
-	const setSolA = (A1, A2) => {
-		setSolA1(A1);
-		setSolA2(A2);
-	};
 
 	const thComponents = [];
 	const tdComponents = [];
-	const notNulls = [];
-	let pSum = 0;
+	const averages = [];
+	let pSum = [0, 0];
+	let avgSum = [0, 0];
 	for (let i = 0; i < n; i++) {
-		const A1 = (states[i] || [])[0];
-		const A2 = (states[i] || [])[1];
-		const B1 = (states[i] || [])[2];
-		const B2 = (states[i] || [])[3];
-		if (A1 !== null && A2 !== null && B1 !== null && B2 !== null) {
-			notNulls.push(A1, A2, B1, B2);
-			pSum += B1 / B2;
+		const x = (states[i] || [])[0];
+		const P1 = (states[i] || [])[1];
+		const P2 = (states[i] || [])[2];
+		if (P1 !== null && P2 !== null) {
+			pSum = fractionAdd(pSum[0], pSum[1], P1, P2);
+		}
+		if (P1 !== null && P2 !== null && x !== null) {
+			averages.push([x, P1, P2]);
+			const [multHigh, multLow] = fractionMultiply(x, 1, P1, P2);
+			avgSum = fractionAdd(avgSum[0], avgSum[1], multHigh, multLow);
 		}
 		thComponents.push(
-			<InputSingleProbability
-				letter={(i + 1).toString()}
-				A1={A1}
-				A2={A2}
-				placeholderA1={`A${i + 1}1`}
-				placeholderA2={`A${i + 1}2`}
-				onChange={(A1, A2) => setA(A1, A2, i)}
-			/>
+			<InputXn n={x} placeholderN={`x${i}`} onChange={(x) => setX(x, i)} />
 		);
 		tdComponents.push(
 			<InputSingleProbability
-				letter={(i + 1).toString()}
-				A1={B1}
-				A2={B2}
-				placeholderA1={`B${i + 1}1`}
-				placeholderA2={`B${i + 1}2`}
-				onChange={(B1, B2) => setB(B1, B2, i)}
+				A1={P1}
+				A2={P2}
+				placeholderA1={`P${i}1`}
+				placeholderA2={`P${i}2`}
+				onChange={(P1, P2) => setP(P1, P2, i)}
 			/>
 		);
 	}
 
-	const lowestA = states.length > 0 ? states[0][0] / states[0][1] : 0;
-	const highestA =
-		states.length > 0
-			? states[states.length - 1][0] / states[states.length - 1][1]
-			: 0;
 	let solution = null;
-	if (solA1 !== null && solA2 !== null && solA2 !== 0) {
-		if (solA1 / solA2 < lowestA) {
-			solution = (
-				<>
-					<Equals />0
-				</>
-			);
-		} else if (solA1 / solA2 >= highestA) {
-			solution = (
-				<>
-					<Equals />1
-				</>
-			);
-		} else {
-			let sum = [0, 0];
-			for (let i = 0; i < n; i++) {
-				const A1 = (states[i] || [])[0];
-				const A2 = (states[i] || [])[1];
-				const B1 = (states[i] || [])[2];
-				const B2 = (states[i] || [])[3];
-				if (
-					A1 === null ||
-					A2 === null ||
-					B1 === null ||
-					B2 === null ||
-					A2 === 0
-				) {
-					continue;
-				}
-				if (A1 / A2 > solA1 / solA2) {
-					break;
-				}
-				sum = fractionAdd(sum[0], sum[1], B1, B2);
+	if (pSum[0] === pSum[1] && pSum[0] > 0) {
+		const disps = [];
+		let dispSum = [0, 0];
+		const xx = [];
+		const yy = [];
+		let yySum = [0, 0];
+		for (let i = 0; i < n; i++) {
+			const x = (states[i] || [])[0];
+			const P1 = (states[i] || [])[1];
+			const P2 = (states[i] || [])[2];
+			if (P1 !== null && P2 !== null && x !== null) {
+				const [subHigh, subLow] = fractionSubtract(x, 1, avgSum[0], avgSum[1]);
+				const [powHigh, powLow] = fractionPower(subHigh, subLow, 2);
+				const [dispHigh, dispLow] = fractionMultiply(powHigh, powLow, P1, P2);
+				dispSum = fractionAdd(dispHigh, dispLow, dispSum[0], dispSum[1]);
+				disps.push([x, P1, P2]);
+				xx.push(i);
+				yySum = fractionAdd(yySum[0], yySum[1], P1, P2);
+				yy.push([yySum[0], yySum[1]]);
 			}
-			solution = (
-				<>
-					<Equals />
-					<DivisionSimplifier high={sum[0]} low={sum[1]} />
-				</>
-			);
 		}
+		const avgSumSimplified = fractionSimplify(avgSum[0], avgSum[1]);
+		const dispSumSimplified = fractionSimplify(dispSum[0], dispSum[1]);
+		solution = (
+			<>
+				<h3>Average</h3>
+				<Equation>
+					{averages.map(([x, high, low]) => (
+						<>
+							<Plus />
+							{x}
+							<Multiply />
+							<Division high={high} low={low} />
+						</>
+					))}
+					<Equals />
+					<DivisionSimplifier high={avgSum[0]} low={avgSum[1]} />
+				</Equation>
+				<h3>Dispersion</h3>
+				<Equation>
+					{disps.map(([x, high, low]) => (
+						<>
+							<Plus />
+							<BracketLeft />
+							{x}
+							<Minus />
+							<Division high={avgSumSimplified[0]} low={avgSumSimplified[1]} />
+							<BracketRight />
+							<Power>2</Power>
+							<Multiply />
+							<Division high={high} low={low} />
+						</>
+					))}
+					<Equals />
+					<DivisionSimplifier high={dispSum[0]} low={dispSum[1]} />
+				</Equation>
+				<h3>
+					Std deviation = sqrt({dispSumSimplified[0]}/{dispSumSimplified[1]})
+				</h3>
+				<Fn xx={xx} yy={yy} />
+			</>
+		);
 	}
 
 	return (
@@ -774,37 +780,49 @@ const FreeWeightsTable = () => {
 				<thead>
 					<tr>
 						<th key={-1}>x</th>
-						<th key={-2}>&lt;{lowestA}</th>
 						{thComponents.map((t, idx) => (
 							<th key={idx}>{t}</th>
 						))}
-						<th key={-3}>&gt;={highestA}</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<td key={-1}>p</td>
-						<td key={-2}>0</td>
 						{tdComponents.map((t, idx) => (
 							<td key={idx}>{t}</td>
 						))}
-						<td key={-3}>1</td>
 					</tr>
 				</tbody>
 			</table>
-			{pSum !== 1 ? `Sum of P is invalid = ${pSum}` : null}
-			<Equation>
-				<InputSingleProbability
-					letter="P"
-					A1={solA1}
-					A2={solA2}
-					placeholderA1="X1"
-					placeholderA2="X2"
-					onChange={setSolA}
-				/>
-				{solution}
-			</Equation>
+			{pSum[0] !== pSum[1]
+				? `Sum of P is invalid = ${pSum[0]}/${pSum[1]}`
+				: null}
+			{solution}
 		</>
+	);
+};
+
+const Fn = ({ xx, yy }) => {
+	const lowestX = xx.length > 0 ? xx[0] : 0;
+	const highestX = xx.length > 0 ? xx[xx.length - 1] : 0;
+	return (
+		<div className="fn">
+			<div className="fn__letter">F(x) =</div>
+			<div className="fn__table">
+				<div className="fn__row" key={-1}>
+					<Division high={yy[0][0]} low={yy[0][1]} /> when x &lt; {lowestX}
+				</div>
+				{xx.slice(1, -1).map((x, idx) => (
+					<div className="fn__row" key={idx}>
+						<Division high={yy[idx + 1][0]} low={yy[idx + 1][1]} />
+						when {xx[idx]} &lt;= x &lt; {x}
+					</div>
+				))}
+				<div className="fn__row" key={-2}>
+					1 when x &gt; {highestX}
+				</div>
+			</div>
+		</div>
 	);
 };
 
@@ -897,12 +915,31 @@ const FreeWeights = () => {
 };
 
 const PageHome = () => {
+	const [black, setBlack] = useState(false);
+	useEffect(() => {
+		if (!localStorage.getItem("black")) {
+			return;
+		}
+		setBlack(true);
+	}, []);
+	const onBlackClick = () => {
+		setBlack(true);
+		localStorage.setItem("black", "true");
+	};
 	return (
 		<>
 			<Head>
 				<title>Math</title>
 			</Head>
-			<div className="content" style={{ marginLeft: "14px" }}>
+			{!black ? (
+				<button type="button" onClick={onBlackClick}>
+					Black
+				</button>
+			) : null}
+			<div
+				className={`content ${black ? "black" : null}`}
+				style={{ paddingLeft: "14px" }}
+			>
 				<Permutations />
 				<Combinations />
 				<Probabilities />
