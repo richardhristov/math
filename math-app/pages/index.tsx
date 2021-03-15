@@ -718,7 +718,7 @@ const FreeWeightsTable = () => {
 				const [dispHigh, dispLow] = fractionMultiply(powHigh, powLow, P1, P2);
 				dispSum = fractionAdd(dispHigh, dispLow, dispSum[0], dispSum[1]);
 				disps.push([x, P1, P2]);
-				xx.push(i);
+				xx.push(x);
 				yySum = fractionAdd(yySum[0], yySum[1], P1, P2);
 				yy.push([yySum[0], yySum[1]]);
 			}
